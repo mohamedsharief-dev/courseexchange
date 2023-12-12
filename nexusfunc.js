@@ -261,7 +261,7 @@ function updateResultsCounter(filteredCourses) {
         // If courseCount is undefined, not a number, or greater than 1000, display "1000+"
         const displayCount = (!courseCount || isNaN(courseCount) || courseCount > 1000) ? "1000+" : courseCount;
 
-        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #b3ce67; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
+        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #44437f; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
     }
 }
 
