@@ -236,11 +236,12 @@ function filterAndDisplayCourses() {
         const providerSearchMatch = course.providerName.toLowerCase().includes(searchInput);
         const categorySearchMatch = course.courseCategory.toLowerCase().includes(searchInput);
         const subcategorySearchMatch = course.courseSubCategory.toLowerCase().includes(searchInput);
+        const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
 
         return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
-               startDateMatch && endDateMatch && // Include updated date checks here
+               startDateMatch && endDateMatch &&
                upcomingSessionMatch && noPrerequisitesMatch &&
-               (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch);
+               (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
     });
   
     state.filteredCourses = filteredCourses;
