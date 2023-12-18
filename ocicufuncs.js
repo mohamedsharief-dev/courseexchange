@@ -138,7 +138,7 @@ function displayCoursesWithoutPagination(courses) {
 
   courses.forEach(course => {
     const courseLink = document.createElement('a');
-    courseLink.href = `/coursedetails?courseCode=${course.code}&providerName=${course.providerName}`;
+    courseLink.href = `/coursedetails?courseCode=${encodeURIComponent(course.code)}&providerName=${encodeURIComponent(course.providerName)}`;
     courseLink.className = 'course-card-link';
 
     const courseCard = document.createElement('div');
@@ -280,7 +280,7 @@ function displayCourses(courses, page = 1, rows = 10) {
     paginatedItems.forEach(course => {
     
         const courseLink = document.createElement('a');
-        courseLink.href = `/coursedetails?courseCode=${course.code}&providerName=${course.providerName}`;
+        courseLink.href = `/coursedetails?courseCode=${encodeURIComponent(course.code)}&providerName=${encodeURIComponent(course.providerName)}`;
         courseLink.className = 'course-card-link';
 
         // Create the course card container
