@@ -170,13 +170,14 @@ function displayCoursesWithoutPagination(courses) {
         provider.textContent = course.providerName;
         provider.className = 'course-provider';
 
+        const category = document.createElement('p');
+        category.textContent = course.courseCategory; 
+        category.className = 'course-category';
+
         const subcategory = document.createElement('p');
         subcategory.textContent = course.courseSubCategory;
         subcategory.className = 'course-subcategory';
 
-        const level = document.createElement('p');
-        level.textContent = course.courseLevel;
-        level.className = 'course-level';
 
         const code = document.createElement('p');
         code.textContent = course.code;
@@ -185,8 +186,8 @@ function displayCoursesWithoutPagination(courses) {
         courseCard.appendChild(logo);
         courseCard.appendChild(title);
         courseCard.appendChild(provider);
-        courseCard.appendChild(subcategory);
-        courseCard.appendChild(level);
+        courseCard.appendChild(category); 
+        courseCard.appendChild(subcategory); 
         courseCard.appendChild(code);
 
         courseLink.appendChild(courseCard);
@@ -322,14 +323,14 @@ function displayCourses(courses, page = 1, rows = 10) {
         provider.textContent = course.providerName;
         provider.className = 'course-provider';
 
+        const category = document.createElement('p');
+        category.textContent = course.courseCategory;
+        category.className = 'course-category';
+
         const subcategory = document.createElement('p');
         subcategory.textContent = course.courseSubCategory;
         subcategory.className = 'course-subcategory';
-
-        const level = document.createElement('p');
-        level.textContent = course.courseLevel;
-        level.className = 'course-level';
-
+      
         const code = document.createElement('p');
         code.textContent = course.code;
         code.className = 'course-code';
@@ -337,8 +338,8 @@ function displayCourses(courses, page = 1, rows = 10) {
         courseCard.appendChild(logo);
         courseCard.appendChild(title);
         courseCard.appendChild(provider);
-        courseCard.appendChild(subcategory);
-        courseCard.appendChild(level);
+        courseCard.appendChild(category); 
+        courseCard.appendChild(subcategory); 
         courseCard.appendChild(code);
 
         courseLink.appendChild(courseCard);
