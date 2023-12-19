@@ -185,10 +185,11 @@ function displayCoursesWithoutPagination(courses) {
 
         courseCard.appendChild(logo);
         courseCard.appendChild(title);
+        courseCard.appendChild(code);
         courseCard.appendChild(provider);
         courseCard.appendChild(category); 
         courseCard.appendChild(subcategory); 
-        courseCard.appendChild(code);
+        
 
         courseLink.appendChild(courseCard);
         courseList.appendChild(courseLink);
@@ -337,10 +338,11 @@ function displayCourses(courses, page = 1, rows = 10) {
 
         courseCard.appendChild(logo);
         courseCard.appendChild(title);
+        courseCard.appendChild(code);
         courseCard.appendChild(provider);
         courseCard.appendChild(category); 
         courseCard.appendChild(subcategory); 
-        courseCard.appendChild(code);
+     
 
         courseLink.appendChild(courseCard);
         courseList.appendChild(courseLink);
