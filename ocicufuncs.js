@@ -142,10 +142,11 @@ function displayCoursesWithoutPagination(courses) {
     headers.innerHTML = `
         <div class="course-logo-header"></div>
         <div class="course-title-header">Course Title</div>
+        <div class="course-code-header">Course Code</div>
         <div class="course-provider-header">Provider</div>
         <div class="course-subcategory-header">Category</div>
         <div class="course-level-header">Sub Category</div>
-        <div class="course-code-header">Course Code</div>
+        
     `;
     courseList.appendChild(headers);
 
@@ -298,10 +299,11 @@ function displayCourses(courses, page = 1, rows = 10) {
     headers.innerHTML = `
         <div class="course-logo-header"></div>
         <div class="course-title-header">Course Title</div>
+        <div class="course-code-header">Course Code</div>
         <div class="course-provider-header">Provider</div>
         <div class="course-subcategory-header">Category</div>
         <div class="course-level-header">Sub Category</div>
-        <div class="course-code-header">Course Code</div>
+        
     `;
     courseList.appendChild(headers);
 
