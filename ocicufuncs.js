@@ -166,6 +166,10 @@ function displayCoursesWithoutPagination(courses) {
         title.textContent = course.title;
         title.className = 'course-title';
 
+        const code = document.createElement('p');
+        code.textContent = course.code;
+        code.className = 'course-code';
+
         const provider = document.createElement('p');
         provider.textContent = course.providerName;
         provider.className = 'course-provider';
@@ -179,9 +183,7 @@ function displayCoursesWithoutPagination(courses) {
         subcategory.className = 'course-subcategory';
 
 
-        const code = document.createElement('p');
-        code.textContent = course.code;
-        code.className = 'course-code';
+        
 
         courseCard.appendChild(logo);
         courseCard.appendChild(title);
@@ -320,6 +322,10 @@ function displayCourses(courses, page = 1, rows = 10) {
         title.textContent = course.title;
         title.className = 'course-title';
 
+        const code = document.createElement('p');
+        code.textContent = course.code;
+        code.className = 'course-code';
+
         const provider = document.createElement('p');
         provider.textContent = course.providerName;
         provider.className = 'course-provider';
@@ -332,9 +338,7 @@ function displayCourses(courses, page = 1, rows = 10) {
         subcategory.textContent = course.courseSubCategory;
         subcategory.className = 'course-subcategory';
       
-        const code = document.createElement('p');
-        code.textContent = course.code;
-        code.className = 'course-code';
+       
 
         courseCard.appendChild(logo);
         courseCard.appendChild(title);
