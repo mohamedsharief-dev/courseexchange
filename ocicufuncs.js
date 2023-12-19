@@ -279,7 +279,6 @@ function updateResultsCounter(filteredCourses) {
 }
 
 function displayCourses(courses, page = 1, rows = 10) {
-
     localStorage.setItem('savedPage', page.toString());
     localStorage.setItem('savedRows', rows.toString());
     const startIndex = (page - 1) * rows;
@@ -288,63 +287,73 @@ function displayCourses(courses, page = 1, rows = 10) {
 
     const courseList = document.getElementById('course-list');
     courseList.innerHTML = '';
-    
+
+    // Create headers
+    const headers = document.createElement('div');
+    headers.className = 'course-card headers';
+    headers.innerHTML = `
+        <div class="course-logo-header"></div>
+        <div class="course-title-header">Course Title</div>
+        <div class="course-provider-header">Provider</div>
+        <div class="course-subcategory-header">Sub Category</div>
+        <div class="course-level-header">Level</div>
+        <div class="course-code-header">Course Code</div>
+    `;
+    courseList.appendChild(headers);
+
     paginatedItems.forEach(course => {
-    
         const courseLink = document.createElement('a');
         courseLink.href = `/coursedetails?courseCode=${encodeURIComponent(course.code)}&providerName=${encodeURIComponent(course.providerName)}`;
         courseLink.className = 'course-card-link';
 
-        // Create the course card container
         const courseCard = document.createElement('div');
         courseCard.className = 'course-card';
 
-        const title = document.createElement('h3');
-        title.textContent = course.title;
-        title.className = 'course-title';
-
-        const subcategory = document.createElement('p');
-        subcategory.textContent = `${course.courseSubCategory}`;
-        subcategory.className = 'course-subcategory';
-        
         const logo = document.createElement('img');
         logo.src = course.logoUrl;
         logo.alt = 'Course Logo';
         logo.className = 'course-logo';
 
+        const title = document.createElement('h3');
+        title.textContent = course.title;
+        title.className = 'course-title';
+
         const provider = document.createElement('p');
-        provider.textContent = `${course.providerName}`;
+        provider.textContent = course.providerName;
         provider.className = 'course-provider';
 
+        const subcategory = document.createElement('p');
+        subcategory.textContent = course.courseSubCategory;
+        subcategory.className = 'course-subcategory';
+
         const level = document.createElement('p');
-        level.textContent = `${course.courseLevel}`;
+        level.textContent = course.courseLevel;
         level.className = 'course-level';
-        
+
         const code = document.createElement('p');
-        code.textContent = `${course.code}`; // Assuming 'code' is the field in your course data
+        code.textContent = course.code;
         code.className = 'course-code';
 
         courseCard.appendChild(logo);
         courseCard.appendChild(title);
         courseCard.appendChild(provider);
-        courseCard.appendChild(subcategory); // Add subcategory here
+        courseCard.appendChild(subcategory);
         courseCard.appendChild(level);
         courseCard.appendChild(code);
 
         courseLink.appendChild(courseCard);
         courseList.appendChild(courseLink);
     });
-    
-   
+
     const paginationDiv = document.getElementById('pagination');
     if (paginationDiv) {
         paginationDiv.style.display = 'block';
     }
- 
+
     updateResultsCounter(paginatedItems.length, courses.length);
-    
     updatePagination(courses.length, page, rows);
 }
+
 
 
 function applySavedFilters() {
