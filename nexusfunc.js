@@ -282,9 +282,9 @@ function displayCourses(courses, page = 1, rows = 10) {
     headers.innerHTML = `
         <div class="course-logo-header"></div>
         <div class="course-title-header">Course Title</div>
-        <div class="course-provider-header"></div>
-        <div class="course-subcategory-header"></div>
-        <div class="course-level-header"></div>
+        <div class="course-provider-header">Provider</div>
+        <div class="course-subcategory-header">Sub Category</div>
+        <div class="course-level-header">Level</div>
         <div class="course-code-header">Course Code</div>
     `;
     courseList.appendChild(headers);
