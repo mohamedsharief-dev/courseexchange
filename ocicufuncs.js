@@ -133,20 +133,17 @@ function clearChips() {
 }
 
 function alphaNumericSort(a, b) {
-    const regex = /^(\d+)(.*)$/; // Regex to separate leading numbers and the rest of the string
-    let [ , aNum, aAlpha ] = a.match(regex) || [ , "0", a ]; // Default to "0" if no leading number
-    let [ , bNum, bAlpha ] = b.match(regex) || [ , "0", b ];
+    const regex = /(\d*)(.*)/; // Regex to capture numeric prefix and the rest of the string
+    let [ , aNum, aAlpha ] = a.match(regex);
+    let [ , bNum, bAlpha ] = b.match(regex);
 
-    // Convert numeric parts to integers for comparison
-    aNum = parseInt(aNum, 10);
-    bNum = parseInt(bNum, 10);
+    // If both parts start with letters or both start with numbers, sort normally
+    if ((aNum === '' && bNum === '') || (aNum !== '' && bNum !== '')) {
+        return a.localeCompare(b);
+    }
 
-    // Compare by alphabetic part first
-    if (aAlpha < bAlpha) return -1;
-    if (aAlpha > bAlpha) return 1;
-
-    // If alphabetic parts are equal, compare by numeric part
-    return aNum - bNum;
+    // If one starts with a number and the other with a letter, the letter comes first
+    return aNum === '' ? -1 : 1;
 }
 
 
