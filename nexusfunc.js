@@ -133,6 +133,7 @@ function clearChips() {
 }
 
 function displayCoursesWithoutPagination(courses) {
+    courses.sort((a, b) => a.code.localeCompare(b.code));
     const courseList = document.getElementById('course-list');
     courseList.innerHTML = '';
 
@@ -261,7 +262,7 @@ function filterAndDisplayCourses() {
                (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
     });
   
-    state.filteredCourses = filteredCourses;
+    state.filteredCourses.sort((a, b) => a.code.localeCompare(b.code));
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
 }
@@ -284,6 +285,7 @@ function updateResultsCounter(filteredCourses) {
 }
 
 function displayCourses(courses, page = 1, rows = 10) {
+    courses.sort((a, b) => a.code.localeCompare(b.code));
     localStorage.setItem('savedPage', page.toString());
     localStorage.setItem('savedRows', rows.toString());
     const startIndex = (page - 1) * rows;
