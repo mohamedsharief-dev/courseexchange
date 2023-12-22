@@ -132,7 +132,26 @@ function clearChips() {
   }
 }
 
+function alphaNumericSort(a, b) {
+    const regex = /^(\d+)(.*)$/; // Regex to separate leading numbers and the rest of the string
+    let [ , aNum, aAlpha ] = a.match(regex) || [ , "0", a ]; // Default to "0" if no leading number
+    let [ , bNum, bAlpha ] = b.match(regex) || [ , "0", b ];
+
+    // Convert numeric parts to integers for comparison
+    aNum = parseInt(aNum, 10);
+    bNum = parseInt(bNum, 10);
+
+    // Compare by alphabetic part first
+    if (aAlpha < bAlpha) return -1;
+    if (aAlpha > bAlpha) return 1;
+
+    // If alphabetic parts are equal, compare by numeric part
+    return aNum - bNum;
+}
+
+
 function displayCoursesWithoutPagination(courses) {
+    courses.sort((a, b) => alphaNumericSort(a.code, b.code));
     const courseList = document.getElementById('course-list');
     courseList.innerHTML = '';
 
@@ -261,7 +280,7 @@ function filterAndDisplayCourses() {
                (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
     });
   
-    state.filteredCourses = filteredCourses;
+    state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
 }
@@ -284,6 +303,7 @@ function updateResultsCounter(filteredCourses) {
 }
 
 function displayCourses(courses, page = 1, rows = 10) {
+    courses.sort((a, b) => alphaNumericSort(a.code, b.code));
     localStorage.setItem('savedPage', page.toString());
     localStorage.setItem('savedRows', rows.toString());
     const startIndex = (page - 1) * rows;
