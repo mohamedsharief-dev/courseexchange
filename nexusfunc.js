@@ -151,7 +151,7 @@ function alphaNumericSort(a, b) {
 }
 
 
-unction getSubcategoriesForCategory(selectedCategory) {
+function getSubcategoriesForCategory(selectedCategory) {
   return state.querySet
     .filter(course => course.courseCategory === selectedCategory)
     .map(course => course.courseSubCategory)
