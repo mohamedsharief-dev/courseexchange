@@ -56,13 +56,17 @@ event.preventDefault();
 
   // Reset filteredCourses to the entire set
   state.filteredCourses = [...state.querySet]; 
+  const allSubcategories = uniqueValues(state.querySet, 'courseSubCategory');
+  populateCheckboxFilter('subcategory-filter', allSubcategories, true);
   updateResultsCounter(state.filteredCourses); 
   displayCourses(state.filteredCourses, 1, state.rows);
 }
 
-
-function populateCheckboxFilter(filterId, options) {
+function populateCheckboxFilter(filterId, options, clearExisting = true) {
   const filterContainer = document.getElementById(filterId);
+  if (clearExisting) {
+    filterContainer.innerHTML = ''; // Clear existing options
+  }
   options.forEach(option => {
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -145,6 +149,28 @@ function alphaNumericSort(a, b) {
     // If one starts with a number and the other with a letter, the letter comes first
     return aNum === '' ? -1 : 1;
 }
+
+
+unction getSubcategoriesForCategory(selectedCategory) {
+  return state.querySet
+    .filter(course => course.courseCategory === selectedCategory)
+    .map(course => course.courseSubCategory)
+    .filter((value, index, self) => self.indexOf(value) === index) // Unique values
+    .sort();
+}
+
+function setupCategoryFilterListener() {
+  const categoryFilter = document.getElementById('category-filter');
+  if (categoryFilter) {
+    categoryFilter.addEventListener('change', () => {
+      const selectedCategories = getSelectedCheckboxValues('category-filter');
+      const subcategories = selectedCategories.flatMap(category => getSubcategoriesForCategory(category));
+      populateCheckboxFilter('subcategory-filter', subcategories);
+    });
+  }
+}
+
+
 
 
 function displayCoursesWithoutPagination(courses) {
@@ -482,6 +508,7 @@ function setupEventListeners() {
       state.noPrerequisitesFilter = event.target.checked;
     }
     filterAndDisplayCourses();
+    setupCategoryFilterListener();
   };
 
   document.getElementById('ms1').addEventListener('change', toggleChange);
@@ -516,4 +543,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('loader').style.display = 'none';
   }
   setupEventListeners();
+  setupCategoryFilterListener();
 });
