@@ -56,6 +56,8 @@ event.preventDefault();
 
   // Reset filteredCourses to the entire set
   state.filteredCourses = [...state.querySet]; 
+  const allSubcategories = uniqueValues(state.querySet, 'courseSubCategory');
+  populateCheckboxFilter('subcategory-filter', allSubcategories, true);
   updateResultsCounter(state.filteredCourses); 
   displayCourses(state.filteredCourses, 1, state.rows);
 }
