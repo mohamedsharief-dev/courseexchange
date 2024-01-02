@@ -8,7 +8,7 @@ let state = {
 
 async function fetchCourses() {
   document.getElementById('loader').style.display = 'block'; // Show the loader
-  const response = await fetch('https://elbert-api-prod.azurewebsites.net/api/readonly/courses/OCICU');
+  const response = await fetch('https://elbert-api-qa.azurewebsites.net/api/readonly/courses/OCICU');
   if (!response.ok) throw new Error('Network response was not ok');
   const data = await response.json();
   localStorage.setItem('coursesData', JSON.stringify(data));
@@ -132,60 +132,93 @@ function clearChips() {
   }
 }
 
-function displayCoursesWithoutPagination(courses) {
-  const courseList = document.getElementById('course-list');
-  courseList.innerHTML = '';
+function alphaNumericSort(a, b) {
+    const regex = /(\d*)(.*)/; // Regex to capture numeric prefix and the rest of the string
+    let [ , aNum, aAlpha ] = a.match(regex);
+    let [ , bNum, bAlpha ] = b.match(regex);
 
-  courses.forEach(course => {
-    const courseLink = document.createElement('a');
-    courseLink.href = `/coursedetails?courseCode=${course.code}`;
-    courseLink.className = 'course-card-link';
+    // If both parts start with letters or both start with numbers, sort normally
+    if ((aNum === '' && bNum === '') || (aNum !== '' && bNum !== '')) {
+        return a.localeCompare(b);
+    }
 
-    const courseCard = document.createElement('div');
-    courseCard.className = 'course-card';
-
-    const title = document.createElement('h3');
-    title.textContent = course.title;
-    title.className = 'course-title';
-
-    const subcategory = document.createElement('p');
-    subcategory.textContent = `${course.courseSubCategory}`;
-    subcategory.className = 'course-subcategory';
-    
-    const logo = document.createElement('img');
-    logo.src = course.logoUrl;
-    logo.alt = 'Course Logo';
-    logo.className = 'course-logo';
-
-    const provider = document.createElement('p');
-    provider.textContent = `${course.providerName}`;
-    provider.className = 'course-provider';
-
-    const level = document.createElement('p');
-    level.textContent = `${course.courseLevel}`;
-    level.className = 'course-level';
-    
-    const code = document.createElement('p');
-        code.textContent = `${course.code}`;
-        code.className = 'course-code';
-
-    courseCard.appendChild(logo);
-    courseCard.appendChild(title);
-    courseCard.appendChild(provider);
-    courseCard.appendChild(subcategory); 
-    courseCard.appendChild(level);
-    courseCard.appendChild(code); // Append the course code element
-
-    courseLink.appendChild(courseCard);
-    courseList.appendChild(courseLink);
-  });
-
-  const paginationDiv = document.getElementById('pagination');
-  if (paginationDiv) {
-    paginationDiv.style.display = 'none';
-  }
+    // If one starts with a number and the other with a letter, the letter comes first
+    return aNum === '' ? -1 : 1;
 }
 
+
+function displayCoursesWithoutPagination(courses) {
+    courses.sort((a, b) => alphaNumericSort(a.code, b.code));
+    const courseList = document.getElementById('course-list');
+    courseList.innerHTML = '';
+
+    // Create headers
+    const headers = document.createElement('div');
+    headers.className = 'course-card headers';
+    headers.innerHTML = `
+        <div class="course-logo-header"></div>
+        <div class="course-title-header">Course Title</div>
+        <div class="course-code-header">Course Code</div>
+        <div class="course-provider-header">Provider</div>
+        <div class="course-subcategory-header">Category</div>
+        <div class="course-level-header">Sub Category</div>
+        
+    `;
+    courseList.appendChild(headers);
+
+    courses.forEach(course => {
+        const courseLink = document.createElement('a');
+        courseLink.href = `/coursedetails?courseCode=${encodeURIComponent(course.code)}&providerName=${encodeURIComponent(course.providerName)}`;
+        courseLink.className = 'course-card-link';
+
+        const courseCard = document.createElement('div');
+        courseCard.className = 'course-card';
+
+        const logo = document.createElement('img');
+        logo.src = course.logoUrl;
+        logo.alt = 'Course Logo';
+        logo.className = 'course-logo';
+
+        const title = document.createElement('h3');
+        title.textContent = course.title;
+        title.className = 'course-title';
+
+        const code = document.createElement('p');
+        code.textContent = course.code;
+        code.className = 'course-code';
+
+        const provider = document.createElement('p');
+        provider.textContent = course.providerName;
+        provider.className = 'course-provider';
+
+        const category = document.createElement('p');
+        category.textContent = course.courseCategory; 
+        category.className = 'course-category';
+
+        const subcategory = document.createElement('p');
+        subcategory.textContent = course.courseSubCategory;
+        subcategory.className = 'course-subcategory';
+
+
+        
+
+        courseCard.appendChild(logo);
+        courseCard.appendChild(title);
+        courseCard.appendChild(code);
+        courseCard.appendChild(provider);
+        courseCard.appendChild(category); 
+        courseCard.appendChild(subcategory); 
+        
+
+        courseLink.appendChild(courseCard);
+        courseList.appendChild(courseLink);
+    });
+
+    const paginationDiv = document.getElementById('pagination');
+    if (paginationDiv) {
+        paginationDiv.style.display = 'none';
+    }
+}
 
 function getSelectedCheckboxValues(filterId) {
   const checkboxes = document.querySelectorAll(`#${filterId} input[type="checkbox"]:checked`);
@@ -236,14 +269,15 @@ function filterAndDisplayCourses() {
         const providerSearchMatch = course.providerName.toLowerCase().includes(searchInput);
         const categorySearchMatch = course.courseCategory.toLowerCase().includes(searchInput);
         const subcategorySearchMatch = course.courseSubCategory.toLowerCase().includes(searchInput);
+        const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
 
-        return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
-               startDateMatch && endDateMatch && // Include updated date checks here
+       return  providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
+               startDateMatch && endDateMatch &&
                upcomingSessionMatch && noPrerequisitesMatch &&
-               (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch);
+               (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
     });
   
-    state.filteredCourses = filteredCourses;
+    state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
 }
@@ -266,7 +300,7 @@ function updateResultsCounter(filteredCourses) {
 }
 
 function displayCourses(courses, page = 1, rows = 10) {
-
+    courses.sort((a, b) => alphaNumericSort(a.code, b.code));
     localStorage.setItem('savedPage', page.toString());
     localStorage.setItem('savedRows', rows.toString());
     const startIndex = (page - 1) * rows;
@@ -275,63 +309,77 @@ function displayCourses(courses, page = 1, rows = 10) {
 
     const courseList = document.getElementById('course-list');
     courseList.innerHTML = '';
-    
+
+    // Create headers
+    const headers = document.createElement('div');
+    headers.className = 'course-card headers';
+    headers.innerHTML = `
+        <div class="course-logo-header"></div>
+        <div class="course-title-header">Course Title</div>
+        <div class="course-code-header">Course Code</div>
+        <div class="course-provider-header">Provider</div>
+        <div class="course-subcategory-header">Category</div>
+        <div class="course-level-header">Sub Category</div>
+        
+    `;
+    courseList.appendChild(headers);
+
     paginatedItems.forEach(course => {
-    
         const courseLink = document.createElement('a');
-        courseLink.href = `/coursedetails?courseCode=${course.code}`;
+        courseLink.href = `/coursedetails?courseCode=${encodeURIComponent(course.code)}&providerName=${encodeURIComponent(course.providerName)}`;
         courseLink.className = 'course-card-link';
 
-        // Create the course card container
         const courseCard = document.createElement('div');
         courseCard.className = 'course-card';
 
-        const title = document.createElement('h3');
-        title.textContent = course.title;
-        title.className = 'course-title';
-
-        const subcategory = document.createElement('p');
-        subcategory.textContent = `${course.courseSubCategory}`;
-        subcategory.className = 'course-subcategory';
-        
         const logo = document.createElement('img');
         logo.src = course.logoUrl;
         logo.alt = 'Course Logo';
         logo.className = 'course-logo';
 
+        const title = document.createElement('h3');
+        title.textContent = course.title;
+        title.className = 'course-title';
+
+        const code = document.createElement('p');
+        code.textContent = course.code;
+        code.className = 'course-code';
+
         const provider = document.createElement('p');
-        provider.textContent = `${course.providerName}`;
+        provider.textContent = course.providerName;
         provider.className = 'course-provider';
 
-        const level = document.createElement('p');
-        level.textContent = `${course.courseLevel}`;
-        level.className = 'course-level';
-        
-        const code = document.createElement('p');
-        code.textContent = `${course.code}`; // Assuming 'code' is the field in your course data
-        code.className = 'course-code';
+        const category = document.createElement('p');
+        category.textContent = course.courseCategory;
+        category.className = 'course-category';
+
+        const subcategory = document.createElement('p');
+        subcategory.textContent = course.courseSubCategory;
+        subcategory.className = 'course-subcategory';
+      
+       
 
         courseCard.appendChild(logo);
         courseCard.appendChild(title);
-        courseCard.appendChild(provider);
-        courseCard.appendChild(subcategory); // Add subcategory here
-        courseCard.appendChild(level);
         courseCard.appendChild(code);
+        courseCard.appendChild(provider);
+        courseCard.appendChild(category); 
+        courseCard.appendChild(subcategory); 
+     
 
         courseLink.appendChild(courseCard);
         courseList.appendChild(courseLink);
     });
-    
-   
+
     const paginationDiv = document.getElementById('pagination');
     if (paginationDiv) {
         paginationDiv.style.display = 'block';
     }
- 
+
     updateResultsCounter(paginatedItems.length, courses.length);
-    
     updatePagination(courses.length, page, rows);
 }
+
 
 
 function applySavedFilters() {
