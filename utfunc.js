@@ -352,7 +352,7 @@ let state = {
   
       paginatedItems.forEach(course => {
           const courseLink = document.createElement('a');
-          courseLink.href = `/coursedetails?courseCode=${encodeURIComponent(course.code)}&providerName=${encodeURIComponent(course.providerName)}`;
+          courseLink.href = `/course-details-ut?courseCode=${encodeURIComponent(course.code)}&providerName=${encodeURIComponent(course.providerName)}`;
           courseLink.className = 'course-card-link';
   
           const courseCard = document.createElement('div');
