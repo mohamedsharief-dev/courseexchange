@@ -8,13 +8,31 @@ let state = {
 
 async function fetchCourses() {
   document.getElementById('loader').style.display = 'block'; // Show the loader
-  const response = await fetch('https://elbert-api-prod.azurewebsites.net/api/readonly/courses/OCICU');
-  if (!response.ok) throw new Error('Network response was not ok');
-  const data = await response.json();
-  localStorage.setItem('coursesData', JSON.stringify(data));
-  state.querySet = data; 
-  return data;
+  
+  // Check if data is already stored in localStorage
+  const storedData = localStorage.getItem('coursesData');
+  if (storedData) {
+    const data = JSON.parse(storedData);
+    state.querySet = data;
+    document.getElementById('loader').style.display = 'none'; // Hide the loader
+    return data;
+  }
+
+  // Fetch new data if not stored
+  try {
+    const response = await fetch('https://elbert-api-qa.azurewebsites.net/api/readonly/courses/OCICU');
+    if (!response.ok) throw new Error('Network response was not ok');
+    const data = await response.json();
+    localStorage.setItem('coursesData', JSON.stringify(data));
+    state.querySet = data;
+    return data;
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
+    document.getElementById('loader').style.display = 'none'; // Hide the loader
+  }
 }
+
 
 function uniqueValues(data, key) {
   let values;
@@ -542,6 +560,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('loader').style.display = 'none';
   }
   setupEventListeners();
+
+  // Call setupCategoryFilterListener here
   setupCategoryFilterListener();
 });
 
