@@ -311,11 +311,12 @@ const endDateMatch = !selectedEndDate || course.sessions.some(session => new Dat
 function updateResultsCounter() {
     const resultsCounter = document.getElementById('results-counter');
     if (resultsCounter) {
-        let courseCount = state.filteredCourses.length;
+        let courseCount = state.filteredCourses.length; // Directly use state.filteredCourses
 
         resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #3fd2c9; background: #626262; padding: 5px; border-radius: 10px;">${courseCount}</span> courses out of ${state.querySet.length} available.`;
     }
 }
+
 
 
 
