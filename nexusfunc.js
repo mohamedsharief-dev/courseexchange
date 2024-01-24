@@ -308,22 +308,18 @@ const endDateMatch = !selectedEndDate || course.sessions.some(session => new Dat
     displayCoursesWithoutPagination(filteredCourses);
 }
 
-function updateResultsCounter(filteredCourses) {
+function updateResultsCounter() {
     const resultsCounter = document.getElementById('results-counter');
     if (resultsCounter) {
-        let courseCount;
+        let courseCount = state.filteredCourses.length; // Updated to use length of filteredCourses
 
-        // Check if filteredCourses is defined and is an array
-        if (Array.isArray(filteredCourses)) {
-            courseCount = filteredCourses.length;
-        }
-
-        // If courseCount is undefined, not a number, or greater than 1000, display "1000+"
-        const displayCount = (!courseCount || isNaN(courseCount) || courseCount > 1000) ? "1000+" : courseCount;
+        // If courseCount is greater than 1000, display "1000+"
+        const displayCount = courseCount > 1000 ? "1000+" : courseCount;
 
         resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #3fd2c9; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
     }
 }
+
 
 function displayCourses(courses, page = 1, rows = 10) {
     courses.sort((a, b) => alphaNumericSort(a.code, b.code));
