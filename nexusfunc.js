@@ -35,6 +35,11 @@ event.preventDefault();
   document.querySelectorAll('.filter-option input[type="checkbox"]').forEach(checkbox => {
     checkbox.checked = false;
   });
+
+  const resultsCounter = document.getElementById('results-counter');
+  if (resultsCounter) {
+    resultsCounter.style.display = 'none';
+  }
   
   const searchInput = document.getElementById('field');
   if (searchInput) searchInput.value = '';
@@ -296,6 +301,7 @@ const endDateMatch = !selectedEndDate || course.sessions.some(session => new Dat
         const categorySearchMatch = course.courseCategory.toLowerCase().includes(searchInput);
         const subcategorySearchMatch = course.courseSubCategory.toLowerCase().includes(searchInput);
         const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
+      
 
         return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
                startDateMatch && endDateMatch &&
@@ -306,6 +312,12 @@ const endDateMatch = !selectedEndDate || course.sessions.some(session => new Dat
     state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
+
+  const resultsCounter = document.getElementById('results-counter');
+  if (resultsCounter) {
+    resultsCounter.style.display = 'block'; // Or another style that shows the div
+  }
+  
 }
 
 function updateResultsCounter(filteredCourses) {
