@@ -282,9 +282,9 @@ function filterAndDisplayCourses() {
         const subcategoryMatch = !selectedSubcategories.length || selectedSubcategories.includes(course.courseSubCategory);
         const tagMatch = !selectedTags.length || selectedTags.some(tag => course.tags.includes(tag));
 
-        // Date filter adjusted to handle sessions
-        const startDateMatch = !selectedStartDate || course.sessions.some(session => new Date(session.startDate) >= new Date(selectedStartDate));
-        const endDateMatch = !selectedEndDate || course.sessions.some(session => new Date(session.endDate) <= new Date(selectedEndDate));
+      // Date filter adjusted for exact match
+const startDateMatch = !selectedStartDate || course.sessions.some(session => new Date(session.startDate).toDateString() === new Date(selectedStartDate).toDateString());
+const endDateMatch = !selectedEndDate || course.sessions.some(session => new Date(session.endDate).toDateString() === new Date(selectedEndDate).toDateString());
 
         const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => new Date(session.startDate) > currentDate);
         const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
