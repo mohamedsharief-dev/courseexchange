@@ -58,7 +58,7 @@ event.preventDefault();
   state.filteredCourses = [...state.querySet]; 
   const allSubcategories = uniqueValues(state.querySet, 'courseSubCategory');
   populateCheckboxFilter('subcategory-filter', allSubcategories, true);
-  updateResultsCounter(state.filteredCourses); 
+ updateResultsCounter();
   displayCourses(state.filteredCourses, 1, state.rows);
 }
 
@@ -304,21 +304,19 @@ const endDateMatch = !selectedEndDate || course.sessions.some(session => new Dat
     });
   
     state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
-    updateResultsCounter(filteredCourses);
+    updateResultsCounter();
     displayCoursesWithoutPagination(filteredCourses);
 }
 
 function updateResultsCounter() {
     const resultsCounter = document.getElementById('results-counter');
     if (resultsCounter) {
-        let courseCount = state.filteredCourses.length; // Updated to use length of filteredCourses
+        let courseCount = state.filteredCourses.length;
 
-        // If courseCount is greater than 1000, display "1000+"
-        const displayCount = courseCount > 1000 ? "1000+" : courseCount;
-
-        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #3fd2c9; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
+        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #3fd2c9; background: #626262; padding: 5px; border-radius: 10px;">${courseCount}</span> courses out of ${state.querySet.length} available.`;
     }
 }
+
 
 
 function displayCourses(courses, page = 1, rows = 10) {
