@@ -35,6 +35,11 @@ event.preventDefault();
   document.querySelectorAll('.filter-option input[type="checkbox"]').forEach(checkbox => {
     checkbox.checked = false;
   });
+
+  const resultsCounter = document.getElementById('results-counter');
+  if (resultsCounter) {
+    resultsCounter.style.display = 'none';
+  }
   
   const searchInput = document.getElementById('field');
   if (searchInput) searchInput.value = '';
@@ -302,10 +307,17 @@ const endDateMatch = !selectedEndDate || course.sessions.some(session => new Dat
                upcomingSessionMatch && noPrerequisitesMatch &&
                (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
     });
+
+  const resultsCounter = document.getElementById('results-counter');
+  if (resultsCounter) {
+    resultsCounter.style.display = 'block'; // Or another style that shows the div
+  }
   
     state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
+
+  
 }
 
 function updateResultsCounter(filteredCourses) {
