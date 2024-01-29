@@ -317,18 +317,19 @@ function filterAndDisplayCourses() {
 
 function updateResultsCounter(filteredCourses) {
     const resultsCounter = document.getElementById('results-counter');
-    if (resultsCounter) {
-        let courseCount;
+    const nothingFoundElement = document.getElementById('nothingFound');
 
-        // Check if filteredCourses is defined and is an array
-        if (Array.isArray(filteredCourses)) {
-            courseCount = filteredCourses.length;
+    if (Array.isArray(filteredCourses)) {
+        if (filteredCourses.length > 0) {
+            let courseCount = (filteredCourses.length > 1000) ? "1000+" : filteredCourses.length;
+            resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: white; background: #626262; padding: 5px; border-radius: 10px;">${courseCount}</span> courses out of ${state.querySet.length} available.`;
+            resultsCounter.style.display = 'block'; // Show the counter
+            if (nothingFoundElement) nothingFoundElement.style.display = 'none'; // Hide 'nothing found' message
+        }  else {
+            resultsCounter.innerHTML = ''; // Reset the counter text
+            resultsCounter.style.display = 'none'; // Hide the counter
+            if (nothingFoundElement) nothingFoundElement.style.display = 'block'; // Show 'nothing found' message
         }
-
-        // If courseCount is undefined, not a number, or greater than 1000, display "1000+"
-        const displayCount = (!courseCount || isNaN(courseCount) || courseCount > 1000) ? "1000+" : courseCount;
-
-        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #b3ce67; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
     }
 }
 
