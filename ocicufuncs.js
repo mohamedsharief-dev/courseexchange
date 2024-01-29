@@ -287,9 +287,11 @@ function filterAndDisplayCourses() {
         const subcategoryMatch = !selectedSubcategories.length || selectedSubcategories.includes(course.courseSubCategory);
         const tagMatch = !selectedTags.length || selectedTags.some(tag => course.tags.includes(tag));
 
-        // Date filter adjusted for exact match
-const startDateMatch = !selectedStartDate || course.sessions.some(session => new Date(session.startDate).toDateString() === new Date(selectedStartDate).toDateString());
-const endDateMatch = !selectedEndDate || course.sessions.some(session => new Date(session.endDate).toDateString() === new Date(selectedEndDate).toDateString());
+        // Adjusted date filter logic
+        const startDate = selectedStartDate ? new Date(selectedStartDate) : null;
+        const endDate = selectedEndDate ? new Date(selectedEndDate) : null;
+        const startDateMatch = !startDate || course.sessions.some(session => new Date(session.startDate) >= startDate);
+        const endDateMatch = !endDate || course.sessions.some(session => new Date(session.endDate) <= endDate);
 
         const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => new Date(session.startDate) > currentDate);
         const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
@@ -302,22 +304,15 @@ const endDateMatch = !selectedEndDate || course.sessions.some(session => new Dat
         const subcategorySearchMatch = course.courseSubCategory.toLowerCase().includes(searchInput);
         const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
 
-       return  providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
+        return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
                startDateMatch && endDateMatch &&
                upcomingSessionMatch && noPrerequisitesMatch &&
                (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
     });
 
-  const resultsCounter = document.getElementById('results-counter');
-  if (resultsCounter) {
-    resultsCounter.style.display = 'block'; // Or another style that shows the div
-  }
-  
     state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
-
-  
 }
 
 function updateResultsCounter(filteredCourses) {
