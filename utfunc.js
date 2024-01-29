@@ -322,23 +322,28 @@ let state = {
   
 }
 
-  function updateResultsCounter(filteredCourses) {
-      const resultsCounter = document.getElementById('results-counter');
-      if (resultsCounter) {
-          let courseCount;
-  
-          // Check if filteredCourses is defined and is an array
-          if (Array.isArray(filteredCourses)) {
-              courseCount = filteredCourses.length;
-          }
-  
-          // If courseCount is undefined, not a number, or greater than 1000, display "1000+"
-          const displayCount = (!courseCount || isNaN(courseCount) || courseCount > 1000) ? "1000+" : courseCount;
-  
-          resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #b3ce67; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
-      }
-  }
-  
+ function updateResultsCounter(filteredCourses) {
+    const resultsCounter = document.getElementById('results-counter');
+
+    // Check if the results counter element exists
+    if (!resultsCounter) return;
+
+    // Handle no results or empty filteredCourses array
+    if (!filteredCourses || filteredCourses.length === 0) {
+        resultsCounter.style.display = 'none';
+        return;
+    }
+
+    // Display the counter
+    resultsCounter.style.display = 'block';
+
+    // Determine the number of courses to display
+    let displayCount = filteredCourses.length > 1000 ? "1000+" : filteredCourses.length;
+
+    // Update the inner HTML of the results counter
+    resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #3fd2c9; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
+}
+
   function displayCourses(courses, page = 1, rows = 10) {
       courses.sort((a, b) => alphaNumericSort(a.code, b.code));
       localStorage.setItem('savedPage', page.toString());
