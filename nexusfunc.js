@@ -329,7 +329,7 @@ function updateResultsCounter(filteredCourses) {
     if (Array.isArray(filteredCourses)) {
         if (filteredCourses.length > 0) {
             let courseCount = (filteredCourses.length > 1000) ? "1000+" : filteredCourses.length;
-            resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #b3ce67; background: #626262; padding: 5px; border-radius: 10px;">${courseCount}</span> courses out of ${state.querySet.length} available.`;
+            resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: white; background: #626262; padding: 5px; border-radius: 10px;">${courseCount}</span> courses out of ${state.querySet.length} available.`;
             resultsCounter.style.display = 'block'; // Show the counter
             if (nothingFoundElement) nothingFoundElement.style.display = 'none'; // Hide 'nothing found' message
         }  else {
