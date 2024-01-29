@@ -260,64 +260,68 @@ let state = {
     return sessions.length > 0 ? sessions[0] : null;
   }
   
-  function filterAndDisplayCourses() {
-      clearChips();
-      const selectedProviders = getSelectedCheckboxValues('provider-filter');
-      const selectedLevels = getSelectedCheckboxValues('level-filter');
-      const selectedCategories = getSelectedCheckboxValues('category-filter');
-      const selectedSubcategories = getSelectedCheckboxValues('subcategory-filter');
-      const selectedTags = getSelectedCheckboxValues('tag-filter');
-      const selectedStartDate = document.getElementById('startDate').value; // Fetch start date
-      const selectedEndDate = document.getElementById('endDate').value;     // Fetch end date
-      const isUpcomingToggleChecked = document.getElementById('ms1').checked;
-      const currentDate = new Date();
-  
-      const searchInput = document.getElementById('field').value.toLowerCase(); // Get value from search input
-  
-      // Create chips for all selected filters and dates
-      const allSelectedFilters = [...selectedProviders, ...selectedLevels, ...selectedCategories, ...selectedSubcategories, ...selectedTags];
-      if (selectedStartDate) allSelectedFilters.push(`Start: ${selectedStartDate}`);
-      if (selectedEndDate) allSelectedFilters.push(`End: ${selectedEndDate}`);
-      allSelectedFilters.forEach(filter => createChip(filter));
-  
-      const filteredCourses = state.querySet.filter(course => {
-          const providerMatch = !selectedProviders.length || selectedProviders.includes(course.providerName);
-          const levelMatch = !selectedLevels.length || selectedLevels.includes(course.courseLevel);
-          const categoryMatch = !selectedCategories.length || selectedCategories.includes(course.courseCategory);
-          const subcategoryMatch = !selectedSubcategories.length || selectedSubcategories.includes(course.courseSubCategory);
-          const tagMatch = !selectedTags.length || selectedTags.some(tag => course.tags.includes(tag));
-  
-        // Date filter adjusted for exact match
-const startDateMatch = !selectedStartDate || course.sessions.some(session => new Date(session.startDate).toDateString() === new Date(selectedStartDate).toDateString());
-const endDateMatch = !selectedEndDate || course.sessions.some(session => new Date(session.endDate).toDateString() === new Date(selectedEndDate).toDateString());
-  
-          const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => new Date(session.startDate) > currentDate);
-          const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
-  
-          // Search filter
-          const titleMatch = course.title.toLowerCase().includes(searchInput);
-          const descriptionMatch = course.courseDescription.toLowerCase().includes(searchInput);
-          const providerSearchMatch = course.providerName.toLowerCase().includes(searchInput);
-          const categorySearchMatch = course.courseCategory.toLowerCase().includes(searchInput);
-          const subcategorySearchMatch = course.courseSubCategory.toLowerCase().includes(searchInput);
-          const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
-  
-         return  providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
-                 startDateMatch && endDateMatch &&
-                 upcomingSessionMatch && noPrerequisitesMatch &&
-                 (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
-      });
+ function filterAndDisplayCourses() {
+    clearChips();
+    const selectedProviders = getSelectedCheckboxValues('provider-filter');
+    const selectedLevels = getSelectedCheckboxValues('level-filter');
+    const selectedCategories = getSelectedCheckboxValues('category-filter');
+    const selectedSubcategories = getSelectedCheckboxValues('subcategory-filter');
+    const selectedTags = getSelectedCheckboxValues('tag-filter');
+    const selectedStartDate = document.getElementById('startDate').value; // Fetch start date
+    const selectedEndDate = document.getElementById('endDate').value;     // Fetch end date
+    const isUpcomingToggleChecked = document.getElementById('ms1').checked;
+    const currentDate = new Date();
 
-      const resultsCounter = document.getElementById('results-counter');
+    const searchInput = document.getElementById('field').value.toLowerCase(); // Get value from search input
+
+    // Create chips for all selected filters and dates
+    const allSelectedFilters = [...selectedProviders, ...selectedLevels, ...selectedCategories, ...selectedSubcategories, ...selectedTags];
+    if (selectedStartDate) allSelectedFilters.push(`Start: ${selectedStartDate}`);
+    if (selectedEndDate) allSelectedFilters.push(`End: ${selectedEndDate}`);
+    allSelectedFilters.forEach(filter => createChip(filter));
+
+    const filteredCourses = state.querySet.filter(course => {
+        const providerMatch = !selectedProviders.length || selectedProviders.includes(course.providerName);
+        const levelMatch = !selectedLevels.length || selectedLevels.includes(course.courseLevel);
+        const categoryMatch = !selectedCategories.length || selectedCategories.includes(course.courseCategory);
+        const subcategoryMatch = !selectedSubcategories.length || selectedSubcategories.includes(course.courseSubCategory);
+        const tagMatch = !selectedTags.length || selectedTags.some(tag => course.tags.includes(tag));
+
+        // Adjusted date filter logic
+        const startDate = selectedStartDate ? new Date(selectedStartDate) : null;
+        const endDate = selectedEndDate ? new Date(selectedEndDate) : null;
+        const startDateMatch = !startDate || course.sessions.some(session => new Date(session.startDate) >= startDate);
+        const endDateMatch = !endDate || course.sessions.some(session => new Date(session.endDate) <= endDate);
+
+        const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => new Date(session.startDate) > currentDate);
+        const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
+
+        // Search filter
+        const titleMatch = course.title.toLowerCase().includes(searchInput);
+        const descriptionMatch = course.courseDescription.toLowerCase().includes(searchInput);
+        const providerSearchMatch = course.providerName.toLowerCase().includes(searchInput);
+        const categorySearchMatch = course.courseCategory.toLowerCase().includes(searchInput);
+        const subcategorySearchMatch = course.courseSubCategory.toLowerCase().includes(searchInput);
+        const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
+
+        return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
+               startDateMatch && endDateMatch &&
+               upcomingSessionMatch && noPrerequisitesMatch &&
+               (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
+    });
+
+    state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
+    updateResultsCounter(filteredCourses);
+    displayCoursesWithoutPagination(filteredCourses);
+
+
+  const resultsCounter = document.getElementById('results-counter');
   if (resultsCounter) {
     resultsCounter.style.display = 'block'; // Or another style that shows the div
   }
-    
-      state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
-      updateResultsCounter(filteredCourses);
-      displayCoursesWithoutPagination(filteredCourses);
-  }
   
+}
+
   function updateResultsCounter(filteredCourses) {
       const resultsCounter = document.getElementById('results-counter');
       if (resultsCounter) {
