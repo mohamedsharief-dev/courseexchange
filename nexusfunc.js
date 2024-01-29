@@ -328,7 +328,7 @@ function updateResultsCounter(filteredCourses) {
     // Check if the results counter element exists
     if (!resultsCounter) return;
 
-    // Handle no results or undefined filteredCourses
+    // Handle no results or empty filteredCourses array
     if (!filteredCourses || filteredCourses.length === 0) {
         resultsCounter.style.display = 'none';
         return;
@@ -343,7 +343,6 @@ function updateResultsCounter(filteredCourses) {
     // Update the inner HTML of the results counter
     resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #3fd2c9; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
 }
-
 
 function displayCourses(courses, page = 1, rows = 10) {
     courses.sort((a, b) => alphaNumericSort(a.code, b.code));
