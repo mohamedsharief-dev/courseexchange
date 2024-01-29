@@ -324,25 +324,24 @@ function filterAndDisplayCourses() {
 
 function updateResultsCounter(filteredCourses) {
     const resultsCounter = document.getElementById('results-counter');
-    if (resultsCounter) {
-        let courseCount;
 
-        if (Array.isArray(filteredCourses)) {
-            courseCount = filteredCourses.length;
-        }
+    // Check if the results counter element exists
+    if (!resultsCounter) return;
 
-        // Hide results counter if no courses are found
-        if (courseCount === 0) {
-            resultsCounter.style.display = 'none';
-            return; // Exit the function early as there's nothing more to do
-        }
-
-        // Update results counter with the actual number of courses
-        const displayCount = (courseCount > 1000) ? "1000+" : courseCount;
-
-        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #3fd2c9; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
-        resultsCounter.style.display = 'block'; // Ensure it's visible if there are results
+    // Handle no results or undefined filteredCourses
+    if (!filteredCourses || filteredCourses.length === 0) {
+        resultsCounter.style.display = 'none';
+        return;
     }
+
+    // Display the counter
+    resultsCounter.style.display = 'block';
+
+    // Determine the number of courses to display
+    let displayCount = filteredCourses.length > 1000 ? "1000+" : filteredCourses.length;
+
+    // Update the inner HTML of the results counter
+    resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #3fd2c9; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
 }
 
 
