@@ -327,23 +327,18 @@ function updateResultsCounter(filteredCourses) {
     if (resultsCounter) {
         let courseCount;
 
+        // Check if filteredCourses is defined and is an array
         if (Array.isArray(filteredCourses)) {
             courseCount = filteredCourses.length;
         }
 
-        // Hide results counter if no courses are found
-        if (courseCount === 0) {
-            resultsCounter.style.display = 'none';
-            return; // Exit the function early as there's nothing more to do
-        }
+        // If courseCount is undefined, not a number, or greater than 1000, display "1000+"
+        const displayCount = (!courseCount || isNaN(courseCount) || courseCount > 1000) ? "1000+" : courseCount;
 
-        // Update results counter with the actual number of courses
-        const displayCount = (courseCount > 1000) ? "1000+" : courseCount;
-
-        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #3fd2c9; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
-        resultsCounter.style.display = 'block'; // Ensure it's visible if there are results
+        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #b3ce67; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
     }
 }
+
 
 
 function displayCourses(courses, page = 1, rows = 10) {
