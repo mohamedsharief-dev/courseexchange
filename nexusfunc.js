@@ -333,11 +333,13 @@ function updateResultsCounter(filteredCourses) {
             resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #b3ce67; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
             resultsCounter.style.display = 'block'; // Show the counter
         } else {
-            // Hide the counter if there are no courses
+            // Clear the counter content and hide it if there are no courses
+            resultsCounter.innerHTML = '';
             resultsCounter.style.display = 'none';
         }
     }
 }
+
 
 
 
