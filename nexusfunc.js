@@ -325,19 +325,20 @@ function filterAndDisplayCourses() {
 function updateResultsCounter(filteredCourses) {
     const resultsCounter = document.getElementById('results-counter');
     if (resultsCounter) {
-        let courseCount;
-
-        // Check if filteredCourses is defined and is an array
-        if (Array.isArray(filteredCourses)) {
-            courseCount = filteredCourses.length;
+        // Check if filteredCourses is defined, is an array, and has elements
+        if (Array.isArray(filteredCourses) && filteredCourses.length > 0) {
+            let courseCount = filteredCourses.length;
+            // If courseCount is greater than 1000, display "1000+"
+            const displayCount = (courseCount > 1000) ? "1000+" : courseCount;
+            resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #b3ce67; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
+            resultsCounter.style.display = 'block'; // Show the counter
+        } else {
+            // Hide the counter if there are no courses
+            resultsCounter.style.display = 'none';
         }
-
-        // If courseCount is undefined, not a number, or greater than 1000, display "1000+"
-        const displayCount = (!courseCount || isNaN(courseCount) || courseCount > 1000) ? "1000+" : courseCount;
-
-        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #b3ce67; background: #626262; padding: 5px; border-radius: 10px;">${displayCount}</span> courses out of ${state.querySet.length} available.`;
     }
 }
+
 
 
 
