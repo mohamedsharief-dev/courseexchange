@@ -313,6 +313,13 @@ function filterAndDisplayCourses() {
     state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
+
+
+  const resultsCounter = document.getElementById('results-counter');
+  if (resultsCounter) {
+    resultsCounter.style.display = 'block'; // Or another style that shows the div
+  }
+  
 }
 
 function updateResultsCounter(filteredCourses) {
