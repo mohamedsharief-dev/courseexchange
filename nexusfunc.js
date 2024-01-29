@@ -332,7 +332,8 @@ function updateResultsCounter(filteredCourses) {
             resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: #b3ce67; background: #626262; padding: 5px; border-radius: 10px;">${courseCount}</span> courses out of ${state.querySet.length} available.`;
             resultsCounter.style.display = 'block'; // Show the counter
             if (nothingFoundElement) nothingFoundElement.style.display = 'none'; // Hide 'nothing found' message
-        } else {
+        }  else {
+            resultsCounter.innerHTML = ''; // Reset the counter text
             resultsCounter.style.display = 'none'; // Hide the counter
             if (nothingFoundElement) nothingFoundElement.style.display = 'block'; // Show 'nothing found' message
         }
