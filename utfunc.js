@@ -8,7 +8,7 @@ let state = {
   
   async function fetchCourses() {
     document.getElementById('loader').style.display = 'block'; // Show the loader
-    const response = await fetch('https://elbert-api-qa.azurewebsites.net/api/readonly/courses/UT Online Exchange');
+    const response = await fetch('https://elbert-api-prod.azurewebsites.net/api/readonly/courses/UT Online Exchange');
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
     localStorage.setItem('coursesData', JSON.stringify(data));
