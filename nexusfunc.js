@@ -287,11 +287,14 @@ function filterAndDisplayCourses() {
         const subcategoryMatch = !selectedSubcategories.length || selectedSubcategories.includes(course.courseSubCategory);
         const tagMatch = !selectedTags.length || selectedTags.some(tag => course.tags.includes(tag));
 
-        // Adjusted date filter logic
-        const startDate = selectedStartDate ? new Date(selectedStartDate) : null;
-        const endDate = selectedEndDate ? new Date(selectedEndDate) : null;
-        const startDateMatch = !startDate || course.sessions.some(session => new Date(session.startDate) >= startDate);
-        const endDateMatch = !endDate || course.sessions.some(session => new Date(session.endDate) <= endDate);
+       const selectedStartDate = document.getElementById('startDate').value;
+    const selectedEndDate = document.getElementById('endDate').value;
+  
+    const startDate = selectedStartDate ? new Date(selectedStartDate) : null;
+    const endDate = selectedEndDate ? new Date(selectedEndDate) : null;
+  
+    const startDateMatch = !startDate || course.sessions.some(session => new Date(session.startDate) >= startDate);
+    const endDateMatch = !endDate || course.sessions.some(session => new Date(session.endDate) < endDate);
 
         const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => new Date(session.startDate) > currentDate);
         const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
@@ -304,8 +307,8 @@ function filterAndDisplayCourses() {
         const subcategorySearchMatch = course.courseSubCategory.toLowerCase().includes(searchInput);
         const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
 
-        return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
-               startDateMatch && endDateMatch &&
+         return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
+               startDateMatch && endDateMatch && 
                upcomingSessionMatch && noPrerequisitesMatch &&
                (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
     });
