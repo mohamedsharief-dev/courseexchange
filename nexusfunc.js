@@ -280,6 +280,7 @@ function filterAndDisplayCourses() {
     if (selectedEndDate) allSelectedFilters.push(`End: ${selectedEndDate}`);
     allSelectedFilters.forEach(filter => createChip(filter));
 
+    // Filter courses based on the selected criteria
     const filteredCourses = state.querySet.filter(course => {
         const providerMatch = !selectedProviders.length || selectedProviders.includes(course.providerName);
         const levelMatch = !selectedLevels.length || selectedLevels.includes(course.courseLevel);
@@ -287,7 +288,7 @@ function filterAndDisplayCourses() {
         const subcategoryMatch = !selectedSubcategories.length || selectedSubcategories.includes(course.courseSubCategory);
         const tagMatch = !selectedTags.length || selectedTags.some(tag => course.tags.includes(tag));
 
-        // Adjusted date filter logic
+        // Adjusted date filter logic with pre-converted dates
         const startDate = selectedStartDate ? new Date(selectedStartDate) : null;
         const endDate = selectedEndDate ? new Date(selectedEndDate) : null;
         const startDateMatch = !startDate || course.sessions.some(session => new Date(session.startDate) >= startDate);
@@ -297,48 +298,43 @@ function filterAndDisplayCourses() {
         const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
 
         // Search filter
-        const titleMatch = course.title.toLowerCase().includes(searchInput);
-        const descriptionMatch = course.courseDescription.toLowerCase().includes(searchInput);
-        const providerSearchMatch = course.providerName.toLowerCase().includes(searchInput);
-        const categorySearchMatch = course.courseCategory.toLowerCase().includes(searchInput);
-        const subcategorySearchMatch = course.courseSubCategory.toLowerCase().includes(searchInput);
-        const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
+        const searchMatch = searchInput && (course.title.toLowerCase().includes(searchInput) ||
+                        course.courseDescription.toLowerCase().includes(searchInput) ||
+                        course.providerName.toLowerCase().includes(searchInput) ||
+                        course.courseCategory.toLowerCase().includes(searchInput) ||
+                        course.courseSubCategory.toLowerCase().includes(searchInput) ||
+                        course.code.toLowerCase().includes(searchInput));
 
         return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
-               startDateMatch && endDateMatch &&
-               upcomingSessionMatch && noPrerequisitesMatch &&
-               (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
+               startDateMatch && endDateMatch && upcomingSessionMatch && noPrerequisitesMatch && searchMatch;
     });
 
+    // Update the global state with the filtered courses
+    state.filteredCourses = filteredCourses;
+
+    // Sort the filtered courses
     state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
+
+    // Update UI components with the filtered and sorted course data
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
-
-
-  const resultsCounter = document.getElementById('results-counter');
-  if (resultsCounter) {
-    resultsCounter.style.display = 'block'; // Or another style that shows the div
-  }
-  
 }
 
 function updateResultsCounter(filteredCourses) {
     const resultsCounter = document.getElementById('results-counter');
     const nothingFoundElement = document.getElementById('nothingFound');
 
-    if (Array.isArray(filteredCourses)) {
-        if (filteredCourses.length > 0) {
-            let courseCount = (filteredCourses.length > 1000) ? "1000+" : filteredCourses.length;
-            resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: white; background: #626262; padding: 5px; border-radius: 10px;">${courseCount}</span> courses out of ${state.querySet.length} available.`;
-            resultsCounter.style.display = 'block'; // Show the counter
-            if (nothingFoundElement) nothingFoundElement.style.display = 'none'; // Hide 'nothing found' message
-        }  else {
-            resultsCounter.innerHTML = ''; // Reset the counter text
-            resultsCounter.style.display = 'none'; // Hide the counter
-            if (nothingFoundElement) nothingFoundElement.style.display = 'block'; // Show 'nothing found' message
-        }
+    if (Array.isArray(filteredCourses) && filteredCourses.length > 0) {
+        let courseCount = (filteredCourses.length > 1000) ? "1000+" : filteredCourses.length;
+        resultsCounter.innerHTML = `Showing <span style="font-weight: bold; color: white; background: #626262; padding: 5px; border-radius: 10px;">${courseCount}</span> courses out of ${state.querySet.length} available.`;
+        resultsCounter.style.display = 'block'; // Show the counter
+        if (nothingFoundElement) nothingFoundElement.style.display = 'none'; // Hide 'nothing found' message
+    } else {
+        resultsCounter.style.display = 'none'; // Hide the counter
+        if (nothingFoundElement) nothingFoundElement.style.display = 'block'; // Show 'nothing found' message
     }
 }
+
 
 
 
