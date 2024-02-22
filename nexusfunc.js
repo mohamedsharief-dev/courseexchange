@@ -291,7 +291,7 @@ function filterAndDisplayCourses() {
         const startDate = selectedStartDate ? new Date(selectedStartDate) : null;
         const endDate = selectedEndDate ? new Date(selectedEndDate) : null;
         const startDateMatch = !startDate || course.sessions.some(session => new Date(session.startDate) >= startDate);
-        const endDateMatch = !endDate || course.sessions.some(session => new Date(session.endDate) <= endDate);
+        const endDateMatch = !endDate || course.sessions.some(session => new Date(session.endDate) < endDate); // N "<" comparison with adjusted endDate
 
         const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => new Date(session.startDate) > currentDate);
         const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
