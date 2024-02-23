@@ -260,7 +260,7 @@ let state = {
     return sessions.length > 0 ? sessions[0] : null;
   }
   
- function filterAndDisplayCourses() {
+function filterAndDisplayCourses() {
     clearChips();
     const selectedProviders = getSelectedCheckboxValues('provider-filter');
     const selectedLevels = getSelectedCheckboxValues('level-filter');
@@ -287,11 +287,14 @@ let state = {
         const subcategoryMatch = !selectedSubcategories.length || selectedSubcategories.includes(course.courseSubCategory);
         const tagMatch = !selectedTags.length || selectedTags.some(tag => course.tags.includes(tag));
 
-        // Adjusted date filter logic
-        const startDate = selectedStartDate ? new Date(selectedStartDate) : null;
-        const endDate = selectedEndDate ? new Date(selectedEndDate) : null;
-        const startDateMatch = !startDate || course.sessions.some(session => new Date(session.startDate) >= startDate);
-        const endDateMatch = !endDate || course.sessions.some(session => new Date(session.endDate) <= endDate);
+        // Adjusted date filter logic to include exact matches
+        const startDate = selectedStartDate ? new Date(selectedStartDate + "T00:00:00") : null; // Ensures comparison starts at the beginning of the day
+        const endDate = selectedEndDate ? new Date(selectedEndDate + "T23:59:59") : null; // Ensures comparison goes through the end of the day
+        const dateMatch = course.sessions.some(session => {
+            const sessionStart = new Date(session.startDate);
+            const sessionEnd = new Date(session.endDate);
+            return (!startDate || sessionStart >= startDate) && (!endDate || sessionEnd <= endDate);
+        });
 
         const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => new Date(session.startDate) > currentDate);
         const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
@@ -305,12 +308,12 @@ let state = {
         const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
 
         return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
-               startDateMatch && endDateMatch &&
-               upcomingSessionMatch && noPrerequisitesMatch &&
+               dateMatch && upcomingSessionMatch && noPrerequisitesMatch &&
                (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
     });
 
-    state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
+    // Assuming alphaNumericSort is correctly implemented elsewhere
+    filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
 
