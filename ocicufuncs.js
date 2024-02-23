@@ -287,30 +287,29 @@ function filterAndDisplayCourses() {
         const subcategoryMatch = !selectedSubcategories.length || selectedSubcategories.includes(course.courseSubCategory);
         const tagMatch = !selectedTags.length || selectedTags.some(tag => course.tags.includes(tag));
 
-        // Adjusted date filter logic
         const startDate = selectedStartDate ? new Date(selectedStartDate) : null;
         const endDate = selectedEndDate ? new Date(selectedEndDate) : null;
-        const startDateMatch = !startDate || course.sessions.some(session => new Date(session.startDate) >= startDate);
-        const endDateMatch = !endDate || course.sessions.some(session => new Date(session.endDate) <= endDate);
+        const dateMatch = course.sessions.some(session => {
+            const sessionStart = new Date(session.startDate);
+            const sessionEnd = new Date(session.endDate);
+            return (!startDate || sessionStart >= startDate) && (!endDate || sessionEnd <= endDate);
+        });
 
         const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => new Date(session.startDate) > currentDate);
+
         const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
 
-        // Search filter
-        const titleMatch = course.title.toLowerCase().includes(searchInput);
-        const descriptionMatch = course.courseDescription.toLowerCase().includes(searchInput);
-        const providerSearchMatch = course.providerName.toLowerCase().includes(searchInput);
-        const categorySearchMatch = course.courseCategory.toLowerCase().includes(searchInput);
-        const subcategorySearchMatch = course.courseSubCategory.toLowerCase().includes(searchInput);
-        const codeMatch = course.code.toLowerCase().includes(searchInput); // New condition for course code
+        const searchMatch = course.title.toLowerCase().includes(searchInput) ||
+                            course.courseDescription.toLowerCase().includes(searchInput) ||
+                            course.providerName.toLowerCase().includes(searchInput) ||
+                            course.courseCategory.toLowerCase().includes(searchInput) ||
+                            course.courseSubCategory.toLowerCase().includes(searchInput) ||
+                            course.code.toLowerCase().includes(searchInput);
 
         return providerMatch && levelMatch && categoryMatch && subcategoryMatch && tagMatch &&
-               startDateMatch && endDateMatch &&
-               upcomingSessionMatch && noPrerequisitesMatch &&
-               (titleMatch || descriptionMatch || providerSearchMatch || categorySearchMatch || subcategorySearchMatch || codeMatch);
+               dateMatch && upcomingSessionMatch && noPrerequisitesMatch && searchMatch;
     });
 
-    state.filteredCourses.sort((a, b) => alphaNumericSort(a.code, b.code));
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
 }
