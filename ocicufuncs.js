@@ -259,7 +259,6 @@ function getSelectedCheckboxValues(filterId) {
 function getClosestSession(sessions) {
   return sessions.length > 0 ? sessions[0] : null;
 }
-
 function filterAndDisplayCourses() {
     clearChips();
     const selectedProviders = getSelectedCheckboxValues('provider-filter');
@@ -271,6 +270,9 @@ function filterAndDisplayCourses() {
     const selectedEndDate = document.getElementById('endDate').value;     // Fetch end date
     const isUpcomingToggleChecked = document.getElementById('ms1').checked;
     const currentDate = new Date();
+
+    // Adjust currentDate to start of the day for consistent comparison
+    currentDate.setHours(0, 0, 0, 0);
 
     const searchInput = document.getElementById('field').value.toLowerCase(); // Get value from search input
 
@@ -289,13 +291,24 @@ function filterAndDisplayCourses() {
 
         const startDate = selectedStartDate ? new Date(selectedStartDate) : null;
         const endDate = selectedEndDate ? new Date(selectedEndDate) : null;
+
+        // Adjust dates to the start of the day for comparison
+        if (startDate) startDate.setHours(0, 0, 0, 0);
+        if (endDate) endDate.setHours(0, 0, 0, 0);
+
         const dateMatch = course.sessions.some(session => {
             const sessionStart = new Date(session.startDate);
             const sessionEnd = new Date(session.endDate);
+            sessionStart.setHours(0, 0, 0, 0);
+            sessionEnd.setHours(0, 0, 0, 0);
             return (!startDate || sessionStart >= startDate) && (!endDate || sessionEnd <= endDate);
         });
 
-        const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => new Date(session.startDate) > currentDate);
+        const upcomingSessionMatch = !isUpcomingToggleChecked || course.sessions.some(session => {
+            const sessionStartDate = new Date(session.startDate);
+            sessionStartDate.setHours(0, 0, 0, 0);
+            return sessionStartDate > currentDate;
+        });
 
         const noPrerequisitesMatch = !state.noPrerequisitesFilter || course.prerequisites === '' || (course.prerequisites && course.prerequisites.toLowerCase() === 'none');
 
@@ -313,6 +326,8 @@ function filterAndDisplayCourses() {
     updateResultsCounter(filteredCourses);
     displayCoursesWithoutPagination(filteredCourses);
 }
+
+
 
 function updateResultsCounter(filteredCourses) {
     const resultsCounter = document.getElementById('results-counter');
