@@ -6,15 +6,28 @@ let state = {
     noPrerequisitesFilter: false,
   };
   
-  async function fetchCourses() {
-    document.getElementById('loader').style.display = 'block'; // Show the loader
-    const response = await fetch('https://elbert-api-prod.azurewebsites.net/api/readonly/courses/UT Online Exchange');
-    if (!response.ok) throw new Error('Network response was not ok');
-    const data = await response.json();
-    localStorage.setItem('coursesData', JSON.stringify(data));
-    state.querySet = data; 
-    return data;
+  
+async function fetchCourses() {
+  document.getElementById('loader').style.display = 'block'; // Show the loader
+
+  // check if the session storage has data already
+  let data = sessionStorage.getItem('coursesData');
+  if (data) {
+    // convert the string data into JavaScript object
+    state.querySet = JSON.parse(data);
+    return state.querySet;
   }
+  
+  const response = await fetch('https://elbert-api-prod.azurewebsites.net/api/readonly/courses/UT Online Exchange');
+  if (!response.ok) throw new Error('Network response was not ok');
+  data = await response.json();
+    
+  // store the API result into session
+  sessionStorage.setItem('coursesData', JSON.stringify(data));
+  
+  state.querySet = data; 
+  return data;
+}
   
   function uniqueValues(data, key) {
     let values;
