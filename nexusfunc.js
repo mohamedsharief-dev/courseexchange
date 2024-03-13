@@ -23,7 +23,7 @@ async function fetchCourses() {
   data = await response.json();
     
   // store the API result into session
-  sessionStorage.setItem('coursesData', JSON.stringify(data));
+  sessionStorage.setItem('coursesData1', JSON.stringify(data));
   
   state.querySet = data; 
   return data;
