@@ -11,7 +11,7 @@ async function fetchCourses() {
   document.getElementById('loader').style.display = 'block'; // Show the loader
 
   // check if the session storage has data already
-  let data = sessionStorage.getItem('coursesData');
+  let data = sessionStorage.getItem('coursesData2');
   if (data) {
     // convert the string data into JavaScript object
     state.querySet = JSON.parse(data);
@@ -23,7 +23,7 @@ async function fetchCourses() {
   data = await response.json();
     
   // store the API result into session
-  sessionStorage.setItem('coursesData', JSON.stringify(data));
+  sessionStorage.setItem('coursesData2', JSON.stringify(data));
   
   state.querySet = data; 
   return data;
